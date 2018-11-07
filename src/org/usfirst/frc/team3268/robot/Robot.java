@@ -28,26 +28,28 @@ public class Robot extends SampleRobot {
 
 	// objects used for operation
 	private DifferentialDrive drive;
-	private Solenoid cannon;
 	private Compressor compressor;
-	private Joystick stick = new Joystick(0);
+	private Solenoid cannon;
+	private Joystick stick;
 
 	public Robot() {
+		
+		// controls
+		stick = new Joystick(0);
 
-		// create motors
+		// drive train instantiation & setup
 		SpeedController frontLeftMotor = new Talon(FRONT_LEFT_MOTOR_PORT);
 		SpeedController backLeftMotor = new Talon(BACK_LEFT_MOTOR_PORT);
 		SpeedController frontRightMotor = new Talon(FRONT_RIGHT_MOTOR_PORT);
 		SpeedController backRightMotor = new Talon(BACK_RIGHT_MOTOR_PORT);
-		// create sides
 		SpeedControllerGroup leftSide = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
 		SpeedControllerGroup rightSide = new SpeedControllerGroup(frontRightMotor, backRightMotor);
 		rightSide.setInverted(true); // adjust to taste
-		// create total drive
 		drive = new DifferentialDrive(leftSide, rightSide);
 		drive.setExpiration(0.1);
 
-		// declare cannon
+		// setup pneumatics
+		compressor = new Compressor();
 		cannon = new Solenoid(OPEN_CANNON_SOLENOID_PORT, CLOSE_CANNON_SOLENOID_PORT);
 	}
 
