@@ -9,11 +9,12 @@ package org.usfirst.frc.team3268.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SampleRobot;
-import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This is a demo program showing the use of the RobotDrive class. The
@@ -34,24 +35,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 @SuppressWarnings("deprecation")
 public class Robot extends SampleRobot {
-	
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
 
-	private DifferentialDrive m_robotDrive
-			= new DifferentialDrive(new Spark(0), new Spark(1));
-	private Joystick m_stick = new Joystick(0);
-	private SendableChooser<String> m_chooser = new SendableChooser<>();
+	// sync ports to wiring
+	private static final int FRONT_LEFT_MOTOR_PORT 	= 0;
+	private static final int BACK_LEFT_MOTOR_PORT 	= 1;
+	private static final int FRONT_RIGHT_MOTOR_PORT	= 8;
+	private static final int BACK_RIGHT_MOTOR_PORT 	= 9;
+	
+	// objects used for operation
+	private DifferentialDrive drive;
+	private Joystick stick = new Joystick(0);
 
 	public Robot() {
-		m_robotDrive.setExpiration(0.1);
-	}
-
-	@Override
-	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto modes", m_chooser);
+		// create motors
+		SpeedController frontLeftMotor	= new Talon(FRONT_LEFT_MOTOR_PORT);
+		SpeedController backLeftMotor	= new Talon(BACK_LEFT_MOTOR_PORT);
+		SpeedController frontRightMotor	= new Talon(FRONT_RIGHT_MOTOR_PORT);
+		SpeedController backRightMotor	= new Talon(BACK_RIGHT_MOTOR_PORT);
+		// create sides
+		SpeedControllerGroup leftSide = new SpeedControllerGroup(frontLeftMotor, backLeftMotor);
+		SpeedControllerGroup rightSide = new SpeedControllerGroup(frontRightMotor, backRightMotor);
+		rightSide.setInverted(true); // adjust to taste
+		// create total drive
+		drive = new DifferentialDrive(leftSide, rightSide);
+		drive.setExpiration(0.1);
 	}
 
 	/**
@@ -147,11 +154,5 @@ public class Robot extends SampleRobot {
 			Timer.delay(0.005);
 		}
 	}
-
-	/**
-	 * Runs during test mode.
-	 */
-	@Override
-	public void test() {
-	}
+	
 }
