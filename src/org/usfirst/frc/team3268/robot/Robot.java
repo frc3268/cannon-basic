@@ -33,7 +33,7 @@ public class Robot extends SampleRobot {
 	private Joystick stick;
 
 	public Robot() {
-		
+
 		// controls
 		stick = new Joystick(0);
 
